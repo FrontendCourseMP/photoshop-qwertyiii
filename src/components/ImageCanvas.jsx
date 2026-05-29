@@ -25,7 +25,7 @@ export default function ImageCanvas({ image }) {
         justifyContent: 'center',
         overflow: 'hidden',
         p: 2,
-        bgcolor: '#e0e0e0',
+        bgcolor: 'background.default',
       }}
     >
       {image ? (
