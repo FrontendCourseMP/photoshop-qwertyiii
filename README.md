@@ -1,6 +1,6 @@
 # ТКГ Лабораторная работа №1
 
-
+https://qwertyiii.github.io/photoshop-qwertyiii-demo/
 
 ## запуск
 
