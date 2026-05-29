@@ -61,6 +61,7 @@ export default function ImageCanvas({ image, activeTool, onPick }) {
             maxHeight: '100%',
             objectFit: 'contain',
             imageRendering: 'pixelated',
+            cursor: activeTool === 'eyedropper' ? 'crosshair' : 'default',
           }}
         />
       ) : (
