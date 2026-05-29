@@ -2,6 +2,15 @@
 
 import { decodeGB7, encodeGB7 } from './gb7.js'
 
+// проверяем есть ли в картинке реально прозрачные пиксели
+function hasAlpha(imageData) {
+  const data = imageData.data
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] !== 255) return true
+  }
+  return false
+}
+
 // формат по расширению
 function formatFromName(name) {
   const lower = name.toLowerCase()
@@ -29,11 +38,14 @@ async function decodeBrowserImage(file, format) {
     ctx.drawImage(img, 0, 0)
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
 
+    // png может быть с альфой (32 bpp) или без (24 bpp), jpg всегда 24
+    const depth = format === 'png' && hasAlpha(imageData) ? 32 : 24
+
     return {
       imageData,
       width: canvas.width,
       height: canvas.height,
-      depth: 24,
+      depth,
       channels: 4,
       format,
     }
