@@ -29,7 +29,6 @@ build
 *.sln
 *.sw?
 .history/
-.claude/
 
 # OS files
 Thumbs.db
