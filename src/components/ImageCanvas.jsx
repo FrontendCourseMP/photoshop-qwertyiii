@@ -34,9 +34,10 @@ export default function ImageCanvas({ image, activeTool, onPick }) {
     const r = data[i]
     const g = data[i + 1]
     const b = data[i + 2]
+    const a = data[i + 3]
     const lab = rgbToCielab(r, g, b)
 
-    onPick({ x, y, r, g, b, l: lab.l, labA: lab.a, labB: lab.b })
+    onPick({ x, y, r, g, b, a, l: lab.l, labA: lab.a, labB: lab.b })
   }
 
   return (

@@ -34,7 +34,10 @@ export default function StatusBar({ image, pickedPixel }) {
           <Typography variant="body2">Объём: {sizeInKB(image)} КБ</Typography>
           {pickedPixel && (
             <Typography variant="body2">
-              пипетка: X:{pickedPixel.x}, Y:{pickedPixel.y} | RGB({pickedPixel.r}, {pickedPixel.g}, {pickedPixel.b}) | Lab({pickedPixel.l.toFixed(2)}, {pickedPixel.labA.toFixed(2)}, {pickedPixel.labB.toFixed(2)})
+              Пипетка:{' '}
+              {pickedPixel.a === 0
+                ? '—'
+                : `X:${pickedPixel.x}, Y:${pickedPixel.y} | RGB(${pickedPixel.r}, ${pickedPixel.g}, ${pickedPixel.b}) | Lab(${pickedPixel.l.toFixed(2)}, ${pickedPixel.labA.toFixed(2)}, ${pickedPixel.labB.toFixed(2)})`}
             </Typography>
           )}
         </>
