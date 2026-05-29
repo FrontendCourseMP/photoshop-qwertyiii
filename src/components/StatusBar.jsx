@@ -9,7 +9,7 @@ function sizeInKB(image) {
   return kb.toFixed(2)
 }
 
-export default function StatusBar({ image }) {
+export default function StatusBar({ image, pickedPixel }) {
   return (
     <Box
       component="footer"
@@ -32,6 +32,11 @@ export default function StatusBar({ image }) {
           </Typography>
           <Typography variant="body2">Глубина цвета: {image.depth} bpp</Typography>
           <Typography variant="body2">Объём: {sizeInKB(image)} КБ</Typography>
+          {pickedPixel && (
+            <Typography variant="body2">
+              пипетка: X:{pickedPixel.x}, Y:{pickedPixel.y} | RGB({pickedPixel.r}, {pickedPixel.g}, {pickedPixel.b}) | Lab({pickedPixel.l.toFixed(2)}, {pickedPixel.labA.toFixed(2)}, {pickedPixel.labB.toFixed(2)})
+            </Typography>
+          )}
         </>
       ) : (
         <Typography variant="body2" color="text.secondary">

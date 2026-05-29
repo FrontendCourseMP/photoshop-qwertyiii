@@ -8,9 +8,10 @@ import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
 import SaveIcon from '@mui/icons-material/Save'
+import ColorizeIcon from '@mui/icons-material/Colorize'
 
-// верхняя панель: открыть и сохранить
-export default function TopToolbar({ onOpenFile, onSave, hasImage }) {
+// верхняя панель: открыть, сохранить, инструменты
+export default function TopToolbar({ onOpenFile, onSave, hasImage, activeTool, setActiveTool }) {
   const inputRef = useRef(null)
   const [menuAnchor, setMenuAnchor] = useState(null)
 
@@ -56,7 +57,7 @@ export default function TopToolbar({ onOpenFile, onSave, hasImage }) {
             disabled={!hasImage}
             onClick={(e) => setMenuAnchor(e.currentTarget)}
           >
-            Сохранить
+            Экспортировать как
           </Button>
           <Menu
             anchorEl={menuAnchor}
@@ -67,6 +68,16 @@ export default function TopToolbar({ onOpenFile, onSave, hasImage }) {
             <MenuItem onClick={() => handleSave('jpg')}>JPG</MenuItem>
             <MenuItem onClick={() => handleSave('gb7')}>GB7</MenuItem>
           </Menu>
+
+          <Button
+            color="inherit"
+            startIcon={<ColorizeIcon />}
+            disabled={!hasImage}
+            variant={activeTool === 'eyedropper' ? 'outlined' : 'text'}
+            onClick={() => setActiveTool(activeTool === 'eyedropper' ? 'none' : 'eyedropper')}
+          >
+            Пипетка
+          </Button>
         </Box>
       </Toolbar>
     </AppBar>
