@@ -62,6 +62,8 @@ function handleClick(e) {
             maxHeight: '100%',
             objectFit: 'contain',
             imageRendering: 'pixelated',
+            outline: image && visibleChanel.alpha ? '1px, solid rgba(255, 255, 255, 0.45)' : 'none',
+            outlineOffset: '2px',
           }}
         />
       ) : (
