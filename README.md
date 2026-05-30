@@ -1,13 +1,30 @@
-# ТКГ Лабораторная работа №1
+# Computer Graphics Technologies
 
-https://qwertyiii.github.io/photoshop-qwertyiii-demo/
+Demo: https://qwertyiii.github.io/photoshop-qwertyiii-demo/
 
-## запуск
+## stack
 
+- Vite + React (JavaScript)
+- Material-UI
+- gh-pages for deployment
+
+## running
+
+```
 npm install
-npm run dev
-npm run build
-npm run preview
+npm run dev       # local dev
+npm run build     # build
+npm run preview   # preview the build
+```
 
+## deploy
 
-тестовые файлы GB7 лежат в test-assets
+```
+npm run deploy
+```
+
+Builds the project and publishes it to the gh-pages branch of the demo repo.
+
+## test files
+
+Test .gb7 files are in the test-assets folder.
