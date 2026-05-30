@@ -8,18 +8,16 @@ import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
 import SaveIcon from '@mui/icons-material/Save'
-import ColorizeIcon from '@mui/icons-material/Colorize'
 
-// верхняя панель: открыть, сохранить, инструменты
-export default function TopToolbar({ onOpenFile, onSave, hasImage, activeTool, setActiveTool }) {
+// верхняя панель файловые действия слева, название справа
+export default function TopToolbar({ onOpenFile, onSave, hasImage }) {
   const inputRef = useRef(null)
   const [menuAnchor, setMenuAnchor] = useState(null)
 
   function handlePick(e) {
     const file = e.target.files[0]
     if (file) onOpenFile(file)
-    // сброс чтобы можно было открыть тот же файл снова
-    e.target.value = ''
+    e.target.value = '' // сброс чтобы открыть тот же файл снова
   }
 
   function handleSave(format) {
@@ -30,10 +28,6 @@ export default function TopToolbar({ onOpenFile, onSave, hasImage, activeTool, s
   return (
     <AppBar position="static">
       <Toolbar variant="dense">
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Технологии компьютерной графики
-        </Typography>
-
         <input
           ref={inputRef}
           type="file"
@@ -68,17 +62,13 @@ export default function TopToolbar({ onOpenFile, onSave, hasImage, activeTool, s
             <MenuItem onClick={() => handleSave('jpg')}>JPG</MenuItem>
             <MenuItem onClick={() => handleSave('gb7')}>GB7</MenuItem>
           </Menu>
-
-          <Button
-            color="inherit"
-            startIcon={<ColorizeIcon />}
-            disabled={!hasImage}
-            variant={activeTool === 'eyedropper' ? 'outlined' : 'text'}
-            onClick={() => setActiveTool(activeTool === 'eyedropper' ? 'none' : 'eyedropper')}
-          >
-            Пипетка
-          </Button>
         </Box>
+
+        <Box sx={{ flexGrow: 1 }} />
+
+        <Typography variant="h6">
+          Технологии компьютерной графики
+        </Typography>
       </Toolbar>
     </AppBar>
   )

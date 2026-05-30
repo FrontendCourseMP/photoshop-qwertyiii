@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import Box from '@mui/material/Box'
 import TopToolbar from './components/Toolbar.jsx'
+import ToolsPanel from './components/ToolsPanel.jsx'
 import ImageCanvas from './components/ImageCanvas.jsx'
 import StatusBar from './components/StatusBar.jsx'
 import ChannelsPanel from './components/ChannelsPanel.jsx'
 import { loadImageFile, saveImageFile } from './imaging/imageIO.js'
 
-// все каналы видимы по умолчанию
 const ALL_VISIBLE = { r: true, g: true, b: true, gray: true, a: true }
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
       const loaded = await loadImageFile(file)
       setImage(loaded)
       setPickedPixel(null)
-      setChannelVisibility(ALL_VISIBLE) // сбрасываем каналы при новой картинке
+      setChannelVisibility(ALL_VISIBLE)
     } catch (err) {
       alert('Не удалось открыть файл: ' + err.message)
     }
@@ -41,19 +41,31 @@ export default function App() {
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <TopToolbar
-        onOpenFile={handleOpenFile}
-        onSave={handleSave}
-        hasImage={Boolean(image)}
-        activeTool={activeTool}
-        setActiveTool={setActiveTool}
-      />
+      <TopToolbar onOpenFile={handleOpenFile} onSave={handleSave} hasImage={Boolean(image)} />
+
       <Box sx={{ flexGrow: 1, minHeight: 0, display: 'flex' }}>
-        <ChannelsPanel
-          image={image}
-          visibility={channelVisibility}
-          onToggle={toggleChannel}
-        />
+        <Box
+          sx={{
+            width: 200,
+            flexShrink: 0,
+            borderRight: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            overflowY: 'auto',
+          }}
+        >
+          <ToolsPanel
+            activeTool={activeTool}
+            setActiveTool={setActiveTool}
+            hasImage={Boolean(image)}
+          />
+          <ChannelsPanel
+            image={image}
+            visibility={channelVisibility}
+            onToggle={toggleChannel}
+          />
+        </Box>
+
         <ImageCanvas
           image={image}
           visibility={channelVisibility}
@@ -61,6 +73,7 @@ export default function App() {
           onPick={setPickedPixel}
         />
       </Box>
+
       <StatusBar image={image} pickedPixel={pickedPixel} />
     </Box>
   )

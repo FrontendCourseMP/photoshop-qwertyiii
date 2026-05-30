@@ -23,17 +23,7 @@ export default function ChannelsPanel({ image, visibility, onToggle }) {
   const channels = getChannels(image)
 
   return (
-    <Box
-      sx={{
-        width: 200,
-        flexShrink: 0,
-        borderRight: '1px solid',
-        borderColor: 'divider',
-        bgcolor: 'background.paper',
-        p: 1.5,
-        overflowY: 'auto',
-      }}
-    >
+    <Box sx={{ p: 1.5 }}>
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
         Каналы
       </Typography>
