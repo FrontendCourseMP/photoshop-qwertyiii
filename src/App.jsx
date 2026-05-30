@@ -3,20 +3,24 @@ import Box from '@mui/material/Box'
 import TopToolbar from './components/Toolbar.jsx'
 import ImageCanvas from './components/ImageCanvas.jsx'
 import StatusBar from './components/StatusBar.jsx'
+import ChannelsPanel from './components/ChannelsPanel.jsx'
 import { loadImageFile, saveImageFile } from './imaging/imageIO.js'
 
+// все каналы видимы по умолчанию
+const ALL_VISIBLE = { r: true, g: true, b: true, gray: true, a: true }
+
 export default function App() {
-  // текущая картинка: { imageData, width, height, depth, channels, format, fileName }
   const [image, setImage] = useState(null)
-  // активный инструмент и результат пипетки
   const [activeTool, setActiveTool] = useState('none')
   const [pickedPixel, setPickedPixel] = useState(null)
+  const [channelVisibility, setChannelVisibility] = useState(ALL_VISIBLE)
 
   async function handleOpenFile(file) {
     try {
       const loaded = await loadImageFile(file)
       setImage(loaded)
-      setPickedPixel(null) // сбрасываем пипетку при новой картинке
+      setPickedPixel(null)
+      setChannelVisibility(ALL_VISIBLE) // сбрасываем каналы при новой картинке
     } catch (err) {
       alert('Не удалось открыть файл: ' + err.message)
     }
@@ -31,6 +35,10 @@ export default function App() {
     }
   }
 
+  function toggleChannel(key) {
+    setChannelVisibility((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <TopToolbar
@@ -40,7 +48,19 @@ export default function App() {
         activeTool={activeTool}
         setActiveTool={setActiveTool}
       />
-      <ImageCanvas image={image} activeTool={activeTool} onPick={setPickedPixel} />
+      <Box sx={{ flexGrow: 1, minHeight: 0, display: 'flex' }}>
+        <ChannelsPanel
+          image={image}
+          visibility={channelVisibility}
+          onToggle={toggleChannel}
+        />
+        <ImageCanvas
+          image={image}
+          visibility={channelVisibility}
+          activeTool={activeTool}
+          onPick={setPickedPixel}
+        />
+      </Box>
       <StatusBar image={image} pickedPixel={pickedPixel} />
     </Box>
   )

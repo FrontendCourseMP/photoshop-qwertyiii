@@ -31,7 +31,7 @@ export default function TopToolbar({ onOpenFile, onSave, hasImage, activeTool, s
     <AppBar position="static">
       <Toolbar variant="dense">
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Технологии компьютерной графики Лабораторная 1
+          Технологии компьютерной графики
         </Typography>
 
         <input
