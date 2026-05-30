@@ -46,7 +46,7 @@ export default function App() {
       <Box sx={{ flexGrow: 1, minHeight: 0, display: 'flex' }}>
         <Box
           sx={{
-            width: 200,
+            width: 240,
             flexShrink: 0,
             borderRight: '1px solid',
             borderColor: 'divider',
