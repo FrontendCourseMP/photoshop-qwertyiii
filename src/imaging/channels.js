@@ -48,12 +48,11 @@ export function applyChannels(image, visibility) {
   return new ImageData(out, image.width, image.height)
 }
 
-// превью каждого канала в градациях серого
+// превью каждого канала r/g/b
 export function makeThumbnails(imageData, channels, size = 64) {
   const w = imageData.width
   const h = imageData.height
 
-  // оригинал в canvas
   const full = document.createElement('canvas')
   full.width = w
   full.height = h
@@ -74,15 +73,15 @@ export function makeThumbnails(imageData, channels, size = 64) {
   channels.forEach((key) => {
     const out = new Uint8ClampedArray(small.length)
     for (let i = 0; i < small.length; i += 4) {
-      let v
-      if (key === 'r') v = small[i]
-      else if (key === 'g') v = small[i + 1]
-      else if (key === 'b') v = small[i + 2]
-      else if (key === 'a') v = small[i + 3]
-      else v = small[i] // gray
-      out[i] = v
-      out[i + 1] = v
-      out[i + 2] = v
+      const r = small[i]
+      const g = small[i + 1]
+      const b = small[i + 2]
+      const a = small[i + 3]
+      if (key === 'r') { out[i] = r; out[i + 1] = 0; out[i + 2] = 0 }
+      else if (key === 'g') { out[i] = 0; out[i + 1] = g; out[i + 2] = 0 }
+      else if (key === 'b') { out[i] = 0; out[i + 1] = 0; out[i + 2] = b }
+      else if (key === 'a') { out[i] = a; out[i + 1] = a; out[i + 2] = a } // альфа серой
+      else { out[i] = r; out[i + 1] = r; out[i + 2] = r } // gray (r=g=b)
       out[i + 3] = 255
     }
 
@@ -90,7 +89,7 @@ export function makeThumbnails(imageData, channels, size = 64) {
     thumb.width = size
     thumb.height = size
     const ctx = thumb.getContext('2d')
-    ctx.fillStyle = '#21252b' // фон под тёмную тему
+    ctx.fillStyle = '#21252b'
     ctx.fillRect(0, 0, size, size)
 
     const tmp = document.createElement('canvas')
