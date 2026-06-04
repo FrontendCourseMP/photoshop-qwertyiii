@@ -69,7 +69,6 @@ export default function LevelsDialog({ open, image, onClose, onApply, onPreview 
       onPreview(null)
       return
     }
-    // rAF чтобы не считать на каждое микродвижение
     const id = requestAnimationFrame(() => {
       onPreview(applyLevels(image.imageData, levels))
     })
@@ -91,20 +90,27 @@ export default function LevelsDialog({ open, image, onClose, onApply, onPreview 
 
   const cur = levels[channel]
 
-  function setParam(key, value) {
-    setLevels({ ...levels, [channel]: { ...cur, [key]: value } })
-  }
+  // позиция среднего маркера по текущей гамме
+  const midPos = cur.bp + Math.pow(0.5, cur.gamma) * (cur.wp - cur.bp)
+  const markers = [cur.bp, midPos, cur.wp]
 
-  // чёрная не лезет на белую
-  function setBp(value) {
-    if (value >= cur.wp) value = cur.wp - 1
-    setParam('bp', value)
-  }
+  // двигаем маркеры activeThumb 0 чёрный 1 гамма 2 белый
+  function handleMarkers(value, activeThumb) {
+    const [bp, mid, wp] = value
+    // чёрная и белая не схлопываются
+    if (wp - bp < 2) return
 
-  // белая не лезет на чёрную
-  function setWp(value) {
-    if (value <= cur.bp) value = cur.bp + 1
-    setParam('wp', value)
+    let gamma = cur.gamma
+    if (activeThumb === 1) {
+      // средний маркер где стоит в такую гамму и переводим
+      let m = (mid - bp) / (wp - bp)
+      if (m < 0.001) m = 0.001
+      if (m > 0.999) m = 0.999
+      gamma = Math.log(m) / Math.log(0.5)
+      if (gamma < 0.1) gamma = 0.1
+      if (gamma > 9.9) gamma = 9.9
+    }
+    setLevels({ ...levels, [channel]: { bp, wp, gamma } })
   }
 
   return (
@@ -129,18 +135,23 @@ export default function LevelsDialog({ open, image, onClose, onApply, onPreview 
         />
       </Box>
 
-      <canvas ref={histRef} width={320} height={160} style={{ width: '100%', background: '#282c34' }} />
+      <canvas ref={histRef} width={320} height={160} style={{ width: '100%', display: 'block', background: '#282c34' }} />
 
-      <Box sx={{ my: 1 }}>
-        <Typography variant="caption">Чёрная точка: {cur.bp}</Typography>
-        <Slider size="small" min={0} max={255} value={cur.bp} onChange={(e, v) => setBp(v)} />
+      {/* три маркера прямо под осью гистограммы */}
+      <Slider
+        value={markers}
+        onChange={(e, v, thumb) => handleMarkers(v, thumb)}
+        min={0}
+        max={255}
+        step={1}
+        disableSwap
+        size="small"
+        sx={{ width: '100%', mt: 0.5 }}
+      />
 
-        <Typography variant="caption">Гамма: {cur.gamma.toFixed(2)}</Typography>
-        <Slider size="small" min={0.1} max={9.9} step={0.1} value={cur.gamma} onChange={(e, v) => setParam('gamma', v)} />
-
-        <Typography variant="caption">Белая точка: {cur.wp}</Typography>
-        <Slider size="small" min={0} max={255} value={cur.wp} onChange={(e, v) => setWp(v)} />
-      </Box>
+      <Typography variant="caption" sx={{ display: 'block', mb: 1 }}>
+        Чёрная {cur.bp} · Гамма {cur.gamma.toFixed(2)} · Белая {cur.wp}
+      </Typography>
 
       <FormControlLabel
         control={<Checkbox checked={preview} onChange={(e) => setPreview(e.target.checked)} />}
