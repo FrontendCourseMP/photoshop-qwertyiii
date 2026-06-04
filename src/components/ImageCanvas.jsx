@@ -23,18 +23,15 @@ function handleClick(e) {
     const canvas = canvasRef.current
     const rect = canvas.getBoundingClientRect()
     if (rect.width === 0 || rect.height === 0) return
-
     const x = Math.floor((e.clientX - rect.left) * (canvas.width / rect.width))
     const y = Math.floor((e.clientY - rect.top) * (canvas.height / rect.height))
     if (x < 0 || y < 0 || x >= image.width || y >= image.height) return
-
-    // пипетка читает отрисовано 
-    const ctx = canvas.getContext('2d')
-    const px = ctx.getImageData(x, y, 1, 1).data
-    const r = px[0]
-    const g = px[1]
-    const b = px[2]
-    const a = px[3]
+    const data = image.imageData.data
+    const i = (y * image.width + x) * 4
+    const r = data[i]
+    const g = data[i + 1]
+    const b = data[i + 2]
+    const a = data[i + 3]
     const lab = rgbToCielab(r, g, b)
 
     onPick({ x, y, r, g, b, a, l: lab.l, labA: lab.a, labB: lab.b })
