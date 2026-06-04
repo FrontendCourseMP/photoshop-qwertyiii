@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Select, MenuItem, FormControlLabel, Checkbox, Button, Box, Typography } from '@mui/material'
-import { applyLevels, computeHistogram } from '../imaging/levels'
+import { Select, MenuItem, FormControlLabel, Checkbox, Button, Box, Typography, Slider } from '@mui/material'import { applyLevels, computeHistogram } from '../imaging/levels'
 
 const FLAT = { bp: 0, wp: 255, gamma: 1 }
 
