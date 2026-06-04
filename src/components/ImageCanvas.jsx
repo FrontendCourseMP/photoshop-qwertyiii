@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography'
 import { rgbToCielab } from '../imaging/cielab.js'
 import { applyChannels } from '../imaging/channels.js'
 
-export default function ImageCanvas({ image, visibility, activeTool, onPick }) {
+export default function ImageCanvas({ image, visibility, activeTool, onPick, previewData }) {
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -13,12 +13,15 @@ export default function ImageCanvas({ image, visibility, activeTool, onPick }) {
     canvas.width = image.width
     canvas.height = image.height
     const ctx = canvas.getContext('2d')
-    // рисуем с учётом включённых каналов, оригинал не трогаем
-    const shown = applyChannels(image, visibility)
-    ctx.putImageData(shown, 0, 0)
-  }, [image, visibility])
+    // есть предпросмотр уровней рисуем его иначе обычный путь с каналами
+    if (previewData) {
+      ctx.putImageData(previewData, 0, 0)
+    } else {
+      ctx.putImageData(applyChannels(image, visibility), 0, 0)
+    }
+  }, [image, visibility, previewData])
 
-function handleClick(e) {
+  function handleClick(e) {
     if (activeTool !== 'eyedropper' || !image) return
     const canvas = canvasRef.current
     const rect = canvas.getBoundingClientRect()
