@@ -13,12 +13,9 @@ export default function ImageCanvas({ image, visibility, activeTool, onPick, pre
     canvas.width = image.width
     canvas.height = image.height
     const ctx = canvas.getContext('2d')
-    // есть предпросмотр уровней рисуем его иначе обычный путь с каналами
-    if (previewData) {
-      ctx.putImageData(previewData, 0, 0)
-    } else {
-      ctx.putImageData(applyChannels(image, visibility), 0, 0)
-    }
+    // в предпросмотре берём изменённые пиксели но каналы применяем как обычно
+    const shown = previewData ? { ...image, imageData: previewData } : image
+    ctx.putImageData(applyChannels(shown, visibility), 0, 0)
   }, [image, visibility, previewData])
 
   function handleClick(e) {
