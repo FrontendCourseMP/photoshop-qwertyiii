@@ -12,6 +12,9 @@ function num(s) {
   return Number.isFinite(n) ? n : 0
 }
 
+// предел чтобы не подвесить браузер
+const MAX_PIXELS = 30000000
+
 export default function ResizeDialog({ open, image, onClose, onApply }) {
   const dialogRef = useRef(null)
 
@@ -36,26 +39,25 @@ export default function ResizeDialog({ open, image, onClose, onApply }) {
     if (!open && dlg.open) dlg.close()
   }, [open])
 
-  // без картинки рисовать нечего но хуки уже вызваны выше
   if (!image) return <dialog ref={dialogRef} />
 
   const W0 = image.width
   const H0 = image.height
 
-  // целевой размер в пикселях
   const newW = units === 'pixels' ? Math.round(num(w)) : Math.round(W0 * num(w) / 100)
   const newH = units === 'pixels' ? Math.round(num(h)) : Math.round(H0 * num(h) / 100)
 
   const maxVal = units === 'pixels' ? 10000 : 1000
   const okW = num(w) >= 1 && num(w) <= maxVal
   const okH = num(h) >= 1 && num(h) <= maxVal
-  const ok = okW && okH && newW >= 1 && newH >= 1
+  // не даём сделать гигантскую картинку
+  const tooBig = newW * newH > MAX_PIXELS
+  const ok = okW && okH && newW >= 1 && newH >= 1 && !tooBig
 
   const mpBefore = (W0 * H0 / 1e6).toFixed(2)
   const mpAfter = (newW * newH / 1e6).toFixed(2)
   const tip = (METHODS.find((m) => m.id === method) || METHODS[0]).tip
 
-  // меняем ширину при связи тянем высоту
   function changeW(val) {
     setW(val)
     if (link) {
@@ -72,7 +74,6 @@ export default function ResizeDialog({ open, image, onClose, onApply }) {
     }
   }
 
-  // переключение единиц с пересчётом текущих значений
   function changeUnits(next) {
     if (next === units) return
     const wpx = units === 'pixels' ? num(w) : Math.round(W0 * num(w) / 100)
@@ -105,6 +106,12 @@ export default function ResizeDialog({ open, image, onClose, onApply }) {
         Было: {W0} × {H0} px ({mpBefore} Мп)<br />
         Станет: {newW} × {newH} px ({mpAfter} Мп)
       </Typography>
+
+      {tooBig && (
+        <Typography variant="body2" color="error" sx={{ mb: 1 }}>
+          Слишком большой размер (макс {(MAX_PIXELS / 1e6).toFixed(0)} Мп)
+        </Typography>
+      )}
 
       <FormControl size="small" fullWidth sx={{ mb: 1.5 }}>
         <InputLabel>Единицы</InputLabel>
