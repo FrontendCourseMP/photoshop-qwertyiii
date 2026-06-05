@@ -6,6 +6,7 @@ import ImageCanvas from './components/ImageCanvas.jsx'
 import StatusBar from './components/StatusBar.jsx'
 import ChannelsPanel from './components/ChannelsPanel.jsx'
 import LevelsDialog from './components/LevelsDialog.jsx'
+import ResizeDialog from './components/ResizeDialog.jsx'
 import { loadImageFile, saveImageFile } from './imaging/imageIO.js'
 
 const ALL_VISIBLE = { r: true, g: true, b: true, gray: true, a: true }
@@ -16,6 +17,7 @@ export default function App() {
   const [pickedPixel, setPickedPixel] = useState(null)
   const [channelVisibility, setChannelVisibility] = useState(ALL_VISIBLE)
   const [levelsOpen, setLevelsOpen] = useState(false)
+  const [resizeOpen, setResizeOpen] = useState(false)
   const [previewData, setPreviewData] = useState(null)
   // масштаб показа в процентах
   const [scale, setScale] = useState(100)
@@ -57,6 +59,13 @@ export default function App() {
     setPreviewData(null)
   }
 
+  // применяем новый размер
+  function applyResize(newImage) {
+    setImage(newImage)
+    setPreviewData(null)
+    setPickedPixel(null)
+  }
+
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <TopToolbar onOpenFile={handleOpenFile} onSave={handleSave} hasImage={Boolean(image)} />
@@ -77,6 +86,7 @@ export default function App() {
             setActiveTool={setActiveTool}
             hasImage={Boolean(image)}
             onOpenLevels={() => setLevelsOpen(true)}
+            onOpenResize={() => setResizeOpen(true)}
           />
           <ChannelsPanel
             image={image}
@@ -105,6 +115,13 @@ export default function App() {
         onClose={closeLevels}
         onApply={applyLevelsResult}
         onPreview={setPreviewData}
+      />
+
+      <ResizeDialog
+        open={resizeOpen}
+        image={image}
+        onClose={() => setResizeOpen(false)}
+        onApply={applyResize}
       />
     </Box>
   )
