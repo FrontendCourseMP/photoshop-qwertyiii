@@ -4,9 +4,10 @@ import Button from '@mui/material/Button'
 import ColorizeIcon from '@mui/icons-material/Colorize'
 import TuneIcon from '@mui/icons-material/Tune'
 import AspectRatioIcon from '@mui/icons-material/AspectRatio'
+import FilterAltIcon from '@mui/icons-material/FilterAlt'
 
 // левая панель инструментов
-export default function ToolsPanel({ activeTool, setActiveTool, hasImage, onOpenLevels, onOpenResize }) {
+export default function ToolsPanel({ activeTool, setActiveTool, hasImage, onOpenLevels, onOpenResize, onOpenFilter }) {
   return (
     <Box sx={{ p: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
@@ -43,6 +44,17 @@ export default function ToolsPanel({ activeTool, setActiveTool, hasImage, onOpen
         sx={{ mt: 1 }}
       >
         Изменить размер
+      </Button>
+      <Button
+        fullWidth
+        size="small"
+        startIcon={<FilterAltIcon />}
+        variant="outlined"
+        disabled={!hasImage}
+        onClick={onOpenFilter}
+        sx={{ mt: 1 }}
+      >
+        Фильтр
       </Button>
     </Box>
   )

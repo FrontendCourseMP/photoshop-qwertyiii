@@ -7,6 +7,7 @@ import StatusBar from './components/StatusBar.jsx'
 import ChannelsPanel from './components/ChannelsPanel.jsx'
 import LevelsDialog from './components/LevelsDialog.jsx'
 import ResizeDialog from './components/ResizeDialog.jsx'
+import FilterDialog from './components/FilterDialog.jsx'
 import { loadImageFile, saveImageFile } from './imaging/imageIO.js'
 
 const ALL_VISIBLE = { r: true, g: true, b: true, gray: true, a: true }
@@ -18,6 +19,7 @@ export default function App() {
   const [channelVisibility, setChannelVisibility] = useState(ALL_VISIBLE)
   const [levelsOpen, setLevelsOpen] = useState(false)
   const [resizeOpen, setResizeOpen] = useState(false)
+  const [filterOpen, setFilterOpen] = useState(false)
   const [previewData, setPreviewData] = useState(null)
   // масштаб показа в процентах
   const [scale, setScale] = useState(100)
@@ -66,6 +68,17 @@ export default function App() {
     setPickedPixel(null)
   }
 
+  // применяем фильтр результат становится новой картинкой
+  function applyFilterResult(data) {
+    setImage((prev) => ({ ...prev, imageData: data }))
+    setPreviewData(null)
+  }
+
+  function closeFilter() {
+    setFilterOpen(false)
+    setPreviewData(null)
+  }
+
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <TopToolbar onOpenFile={handleOpenFile} onSave={handleSave} hasImage={Boolean(image)} />
@@ -87,6 +100,7 @@ export default function App() {
             hasImage={Boolean(image)}
             onOpenLevels={() => setLevelsOpen(true)}
             onOpenResize={() => setResizeOpen(true)}
+            onOpenFilter={() => setFilterOpen(true)}
           />
           <ChannelsPanel
             image={image}
@@ -122,6 +136,14 @@ export default function App() {
         image={image}
         onClose={() => setResizeOpen(false)}
         onApply={applyResize}
+      />
+
+      <FilterDialog
+        open={filterOpen}
+        image={image}
+        onClose={closeFilter}
+        onApply={applyFilterResult}
+        onPreview={setPreviewData}
       />
     </Box>
   )
