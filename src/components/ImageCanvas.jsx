@@ -25,13 +25,11 @@ export default function ImageCanvas({ image, visibility, activeTool, onPick, pre
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
 
-    // пиксели как на экране каналы и предпросмотр уровней
     const base = previewData ? { ...image, imageData: previewData } : image
     const shown = applyChannels(base, visibility)
 
     const dw = Math.max(1, Math.round(image.width * scale / 100))
     const dh = Math.max(1, Math.round(image.height * scale / 100))
-    // на 100% не пересчитываем
     const out = (dw === image.width && dh === image.height) ? shown : resizeImage(shown, dw, dh, 'bilinear')
 
     canvas.width = dw
@@ -44,7 +42,6 @@ export default function ImageCanvas({ image, visibility, activeTool, onPick, pre
     const canvas = canvasRef.current
     const rect = canvas.getBoundingClientRect()
     if (rect.width === 0 || rect.height === 0) return
-    // позиция в пикселях холста потом переводим в пиксель оригинала
     const cx = (e.clientX - rect.left) * (canvas.width / rect.width)
     const cy = (e.clientY - rect.top) * (canvas.height / rect.height)
     const x = Math.floor(cx * image.width / canvas.width)
@@ -68,8 +65,6 @@ export default function ImageCanvas({ image, visibility, activeTool, onPick, pre
         flexGrow: 1,
         minHeight: 0,
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         overflow: 'auto',
         p: 2,
         bgcolor: 'background.default',
@@ -86,7 +81,7 @@ export default function ImageCanvas({ image, visibility, activeTool, onPick, pre
           }}
         />
       ) : (
-        <Typography color="text.secondary">
+        <Typography sx={{ m: 'auto' }} color="text.secondary">
           Откройте изображение (PNG, JPG или GB7)
         </Typography>
       )}

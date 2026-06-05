@@ -1,3 +1,4 @@
+// ближайший сосед берём ближайший исходный пиксель
 function resizeNearest(src, newW, newH) {
   const out = new ImageData(newW, newH)
   const s = src.data
@@ -20,7 +21,7 @@ function resizeNearest(src, newW, newH) {
   return out
 }
 
-// билинейная смешиваем 4 соседних пикселя
+// билинейная смешиваем 4 соседних пикселя с учётом прозрачности
 function resizeBilinear(src, newW, newH) {
   const out = new ImageData(newW, newH)
   const s = src.data
@@ -42,16 +43,29 @@ function resizeBilinear(src, newW, newH) {
       const x0c = Math.max(0, Math.min(sw - 1, x0))
       const x1c = Math.max(0, Math.min(sw - 1, x0 + 1))
 
-      const di = (y * newW + x) * 4
       const i00 = (y0c * sw + x0c) * 4
       const i10 = (y0c * sw + x1c) * 4
       const i01 = (y1c * sw + x0c) * 4
       const i11 = (y1c * sw + x1c) * 4
+      const di = (y * newW + x) * 4
 
-      for (let c = 0; c < 4; c++) {
-        const top = s[i00 + c] + (s[i10 + c] - s[i00 + c]) * wx
-        const bot = s[i01 + c] + (s[i11 + c] - s[i01 + c]) * wx
-        d[di + c] = Math.round(top + (bot - top) * wy)
+      // альфа смешивается обычно
+      const a00 = s[i00 + 3], a10 = s[i10 + 3], a01 = s[i01 + 3], a11 = s[i11 + 3]
+      const aTop = a00 + (a10 - a00) * wx
+      const aBot = a01 + (a11 - a01) * wx
+      const a = aTop + (aBot - aTop) * wy
+      d[di + 3] = Math.round(a)
+
+      // цвет умножаем на альфу мешаем потом делим обратно
+      for (let c = 0; c < 3; c++) {
+        const p00 = s[i00 + c] * a00
+        const p10 = s[i10 + c] * a10
+        const p01 = s[i01 + c] * a01
+        const p11 = s[i11 + c] * a11
+        const top = p00 + (p10 - p00) * wx
+        const bot = p01 + (p11 - p01) * wx
+        const pm = top + (bot - top) * wy
+        d[di + c] = a > 0 ? Math.round(pm / a) : 0
       }
     }
   }
