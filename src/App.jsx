@@ -17,6 +17,10 @@ export default function App() {
   const [channelVisibility, setChannelVisibility] = useState(ALL_VISIBLE)
   const [levelsOpen, setLevelsOpen] = useState(false)
   const [previewData, setPreviewData] = useState(null)
+  // масштаб показа в процентах
+  const [scale, setScale] = useState(100)
+  // меняется только при открытии нового файла чтобы вписать картинку
+  const [fitToken, setFitToken] = useState(0)
 
   async function handleOpenFile(file) {
     try {
@@ -24,6 +28,7 @@ export default function App() {
       setImage(loaded)
       setPickedPixel(null)
       setChannelVisibility(ALL_VISIBLE)
+      setFitToken((t) => t + 1)
     } catch (err) {
       alert('Не удалось открыть файл: ' + err.message)
     }
@@ -42,13 +47,11 @@ export default function App() {
     setChannelVisibility((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
-  // применяем уровни результат становится новой картинкой
   function applyLevelsResult(data) {
     setImage((prev) => ({ ...prev, imageData: data }))
     setPreviewData(null)
   }
 
-  // закрыть окно уровней и убрать предпросмотр
   function closeLevels() {
     setLevelsOpen(false)
     setPreviewData(null)
@@ -88,10 +91,13 @@ export default function App() {
           activeTool={activeTool}
           onPick={setPickedPixel}
           previewData={previewData}
+          scale={scale}
+          onScaleChange={setScale}
+          fitToken={fitToken}
         />
       </Box>
 
-      <StatusBar image={image} pickedPixel={pickedPixel} />
+      <StatusBar image={image} pickedPixel={pickedPixel} scale={scale} onScaleChange={setScale} />
 
       <LevelsDialog
         open={levelsOpen}
