@@ -15,7 +15,7 @@ export function computeHistogram(imageData, channel) {
     else if (channel === 'g') value = data[i + 1]
     else if (channel === 'b') value = data[i + 2]
     else if (channel === 'a') value = data[i + 3]
-    else value = luma(data[i], data[i + 1], data[i + 2]) 
+    else value = luma(data[i], data[i + 1], data[i + 2])
     hist[value]++
   }
   return hist
@@ -24,13 +24,13 @@ export function computeHistogram(imageData, channel) {
 // bp чёрная точка wp белая gamma полутона
 export function buildLUT(bp, wp, gamma) {
   const lut = new Uint8ClampedArray(256)
-  const range = wp - bp 
+  const range = wp - bp
   for (let r = 0; r < 256; r++) {
-    let t = (r - bp) / range 
-    if (t < 0) t = 0 
-    if (t > 1) t = 1 
-    t = Math.pow(t, 1 / gamma) 
-    lut[r] = Math.round(t * 255) 
+    let t = (r - bp) / range
+    if (t < 0) t = 0
+    if (t > 1) t = 1
+    t = Math.pow(t, gamma)
+    lut[r] = Math.round(t * 255)
   }
   return lut
 }
