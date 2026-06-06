@@ -92,6 +92,8 @@ export default function LevelsDialog({ open, image, onClose, onApply, onPreview 
 
   // есть ли у картинки реальная альфа
   const hasAlpha = !!image && (image.depth === 32 || image.depth === 8)
+  // gb7 это серое изображение значит один серый канал вместо rgb
+  const isGray = !!image && image.format === 'gb7'
 
   // позиция среднего маркера по гамме s = r^gamma
   const midPos = cur.bp + Math.pow(0.5, 1 / cur.gamma) * (cur.wp - cur.bp)
@@ -145,10 +147,11 @@ export default function LevelsDialog({ open, image, onClose, onApply, onPreview 
             onChange={(e) => setChannel(e.target.value)}
             MenuProps={{ container: () => dialogRef.current }}
           >
-            <MenuItem value="rgb">RGB</MenuItem>
-            <MenuItem value="r">Red</MenuItem>
-            <MenuItem value="g">Green</MenuItem>
-            <MenuItem value="b">Blue</MenuItem>
+            {/* для gb7 один серый канал вместо rgb */}
+            <MenuItem value="rgb">{isGray ? 'Серый' : 'RGB'}</MenuItem>
+            {!isGray && <MenuItem value="r">Red</MenuItem>}
+            {!isGray && <MenuItem value="g">Green</MenuItem>}
+            {!isGray && <MenuItem value="b">Blue</MenuItem>}
             {hasAlpha && <MenuItem value="a">Alpha</MenuItem>}
           </Select>
           <FormControlLabel
