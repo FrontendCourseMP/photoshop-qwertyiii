@@ -64,6 +64,8 @@ export default function FilterDialog({ open, image, onClose, onApply, onPreview 
   if (!image) return <dialog ref={dialogRef} className="filter-dialog" />
 
   const hasAlpha = image.depth === 32 || image.depth === 8
+  // gb7 это серое изображение значит вместо rgb один серый канал
+  const isGray = image.format === 'gb7'
 
   // выбор преднастройки заполняет поля
   function selectPreset(id) {
@@ -82,6 +84,14 @@ export default function FilterDialog({ open, image, onClose, onApply, onPreview 
 
   function toggleChannel(key) {
     setChannels((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  // серый переключается сразу по r g b
+  function toggleGray() {
+    setChannels((prev) => {
+      const v = !prev.r
+      return { ...prev, r: v, g: v, b: v }
+    })
   }
 
   function handleReset() {
@@ -157,11 +167,17 @@ export default function FilterDialog({ open, image, onClose, onApply, onPreview 
           ))}
         </Box>
 
-        {/* выбор каналов */}
+        {/* выбор каналов для gb7 один серый вместо rgb */}
         <Box sx={{ display: 'flex', gap: 0.5, mb: 1 }}>
-          <FormControlLabel control={<Checkbox checked={channels.r} onChange={() => toggleChannel('r')} />} label="R" />
-          <FormControlLabel control={<Checkbox checked={channels.g} onChange={() => toggleChannel('g')} />} label="G" />
-          <FormControlLabel control={<Checkbox checked={channels.b} onChange={() => toggleChannel('b')} />} label="B" />
+          {isGray ? (
+            <FormControlLabel control={<Checkbox checked={channels.r} onChange={toggleGray} />} label="Серый" />
+          ) : (
+            <>
+              <FormControlLabel control={<Checkbox checked={channels.r} onChange={() => toggleChannel('r')} />} label="R" />
+              <FormControlLabel control={<Checkbox checked={channels.g} onChange={() => toggleChannel('g')} />} label="G" />
+              <FormControlLabel control={<Checkbox checked={channels.b} onChange={() => toggleChannel('b')} />} label="B" />
+            </>
+          )}
           {hasAlpha && (
             <FormControlLabel control={<Checkbox checked={channels.a} onChange={() => toggleChannel('a')} />} label="A" />
           )}
